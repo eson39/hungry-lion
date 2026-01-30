@@ -1,0 +1,294 @@
+#root {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app {
+  min-height: 4rem;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.live-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-clock-date {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.live-clock-time {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-switch-slider {
+  position: absolute;
+  inset: 0;
+  background: #1a1a1a;
+  border: 1px solid #43c6f7;
+  border-radius: 26px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-switch-slider::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 2px;
+  bottom: 2px;
+  background: #43c6f7;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.theme-switch input:checked + .theme-switch-slider {
+  background: #e8f4fc;
+  border-color: #43c6f7;
+}
+
+.theme-switch input:checked + .theme-switch-slider::before {
+  transform: translateX(22px);
+  background: #0ea5e9;
+}
+
+.theme-switch-slider:hover {
+  border-color: #93d9fa;
+}
+
+.meal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.meal-tabs button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #43c6f7;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.meal-tabs button:hover {
+  background: #43c6f7;
+}
+
+.meal-tabs button.active {
+  background: #43c6f7;
+  color: white;
+  border-color: #646cff;
+}
+
+.rating-message {
+  margin: 0 0 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #fbbf24;
+}
+
+.halls {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.5rem;
+}
+
+.hall-card {
+  padding: 1.25rem;
+  border: 1px solid #93d9fa;
+  border-radius: 8px;
+  background: #282828;
+  min-width: 150px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hall-card h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+}
+
+.hall-name {
+  color: #4077d1;
+}
+
+.hall-rating-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  min-height: 1.5rem;
+}
+
+.hall-rating-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+.hall-rating-average,
+.hall-rating-empty {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #93d9fa;
+  min-width: 6rem;
+  display: inline-block;
+  text-align: left;
+}
+
+.hall-rating-empty {
+  opacity: 0.7;
+  font-weight: normal;
+}
+
+.star-rating {
+  display: flex;
+  gap: 0.15rem;
+  align-items: center;
+}
+
+.star-rating-btn {
+  padding: 0.15rem;
+  background: none;
+  border: none;
+  color: #93d9fa;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.4;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.star-rating-btn:hover {
+  opacity: 0.9;
+}
+
+.star-rating-btn--filled {
+  opacity: 1;
+  color: #fbbf24;
+}
+
+.star-rating-btn--filled:hover {
+  opacity: 1;
+}
+
+.hours {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: #bae6fc;
+}
+
+.hall-card .stations {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.station h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: #93d9fa;
+}
+
+.station ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.station li {
+  margin: 0.2rem 0;
+}
+
+/* Light mode overrides */
+[data-theme="light"] .rating-message {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #d97706;
+  color: #b45309;
+}
+
+[data-theme="light"] .meal-tabs button {
+  border-color: #0ea5e9;
+  color: #0369a1;
+  background: transparent;
+}
+
+[data-theme="light"] .meal-tabs button:hover,
+[data-theme="light"] .meal-tabs button.active {
+  background: #0ea5e9;
+  color: white;
+}
+
+[data-theme="light"] .hall-card {
+  background: #fff;
+  border-color: #e5e7eb;
+}
+
+[data-theme="light"] .hall-card h2 {
+  color: #1e3a5f;
+}
+
+[data-theme="light"] .hall-rating-average,
+[data-theme="light"] .hall-rating-empty {
+  color: #0369a1;
+}
+
+[data-theme="light"] .star-rating-btn {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .star-rating-btn--filled {
+  color: #d97706;
+}
+
+[data-theme="light"] .hours {
+  color: #64748b;
+}
+
+[data-theme="light"] .station h3 {
+  color: #0369a1;
+}
+
+[data-theme="light"] .station li {
+  color: #334155;
+}
