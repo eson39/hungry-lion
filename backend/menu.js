@@ -2,7 +2,7 @@ import { getDb, getMenuCollection } from "./db.js";
 import { scrapeAllMeals } from "./scrape.js";
 
 const MENU_DOC_ID = "latest";
-const REFRESH_INTERVAL_MS = 30 * 60 * 1000;
+const REFRESH_INTERVAL_MS = 6 * 60 * 60 * 1000;
 
 export async function getMenu() {
   await getDb();
