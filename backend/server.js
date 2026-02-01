@@ -74,17 +74,8 @@ app.get("/api/menu/:meal", async (req, res) => {
   }
 });
 
-app.get("/api/ratings/debug", (req, res) => {
-  res.json({
-    dateKey: getTodayKey(),
-    timezone: "America/New_York",
-    serverTime: new Date().toISOString(),
-  });
-});
-
 app.get("/api/ratings/today", async (req, res) => {
   try {
-    res.set("Cache-Control", "no-store, no-cache, must-revalidate");
     const visitorId = getVisitorIdOptional(req);
     const data = await getTodayAverages(visitorId);
     res.json(data);
