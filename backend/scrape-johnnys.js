@@ -115,13 +115,19 @@ export async function scrapeJohnnys() {
       latenight: null,
     };
 
+    const SIDE_OF = "Served with a Side of";
     for (const meal of ["breakfast", "lunch", "dinner", "latenight"]) {
       const stations = (byMeal[meal] || [])
         .map((s) => ({
           name: clean(s.name),
-          items: [...new Set((s.items || []).map(clean).filter(Boolean))],
+          items: [...new Set(
+            (s.items || [])
+              .map(clean)
+              .filter(Boolean)
+              .filter((item) => !item.includes(SIDE_OF))
+          )],
         }))
-        .filter((s) => s.name && s.items.length > 0);
+        .filter((s) => s.name && !s.name.includes(SIDE_OF) && s.items.length > 0);
 
       if (stations.length > 0) {
         result[meal] = {

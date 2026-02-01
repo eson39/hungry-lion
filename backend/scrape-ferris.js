@@ -23,14 +23,13 @@ export async function scrapeFerris() {
     await page.goto(FERRIS_URL, { waitUntil: "networkidle2", timeout: 20000 });
     await new Promise((r) => setTimeout(r, 4000));
 
-    // Wait for capacity indicator (loads async from Occuspace)
     try {
       await page.waitForSelector(".indicator .marker, .indicator-item .marker, .cu-dining-crowdedness .marker", {
         timeout: 8000,
       });
       await new Promise((r) => setTimeout(r, 1000));
     } catch {
-      // Continue – capacity may not be available
+      
     }
 
     if (saveHtml) {
