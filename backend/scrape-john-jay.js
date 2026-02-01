@@ -38,7 +38,7 @@ export async function scrapeJohnJay() {
       });
       await new Promise((r) => setTimeout(r, 1000));
     } catch {
-      // Continue
+
     }
 
     if (saveHtml) {
@@ -115,7 +115,7 @@ export async function scrapeJohnJay() {
           }
         }
       } catch {
-        // Continue
+
       }
     }
 

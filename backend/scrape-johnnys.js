@@ -27,7 +27,7 @@ export async function scrapeJohnnys() {
       await page.waitForSelector(".cu-dining-menu-tabs, .cu-dining-meals", { timeout: 8000 });
       await new Promise((r) => setTimeout(r, 1000));
     } catch {
-      // Continue
+
     }
 
     if (saveHtml) {
@@ -86,7 +86,7 @@ export async function scrapeJohnnys() {
           }
         }
       } catch {
-        // Continue
+
       }
     }
 

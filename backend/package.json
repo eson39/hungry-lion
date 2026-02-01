@@ -15,7 +15,8 @@
     "scrape-ferris": "node scrape-ferris.js",
     "scrape-ferris:save": "SAVE_HTML=1 node scrape-ferris.js",
     "scrape-johnnys": "node scrape-johnnys.js",
-    "scrape-johnnys:save": "SAVE_HTML=1 node scrape-johnnys.js"
+    "scrape-johnnys:save": "SAVE_HTML=1 node scrape-johnnys.js",
+    "postinstall": "npx puppeteer browsers install chrome || true"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,7 @@
   "description": "",
   "dependencies": {
     "axios": "^1.13.4",
+    "puppeteer": "^23.0.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
