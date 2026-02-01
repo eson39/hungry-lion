@@ -1,12 +1,20 @@
+import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import express from "express";
 import cors from "cors";
-import { scrapeMeal, scrapeAllMeals } from "./scrape.js";
+import { getDb } from "./db.js";
+import { getMenu, refreshMenu, REFRESH_INTERVAL_MS } from "./menu.js";
 import { getTodayAverages, addRating, getTodayKey } from "./ratings.js";
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+].filter(Boolean);
+
+app.set("trust proxy", 1);
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 const COOKIE_OPTS = { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: "lax", path: "/" };
@@ -44,7 +52,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/menu", async (req, res) => {
   try {
-    const data = await scrapeAllMeals();
+    const data = await getMenu();
     res.json(data);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -53,7 +61,13 @@ app.get("/api/menu", async (req, res) => {
 
 app.get("/api/menu/:meal", async (req, res) => {
   try {
-    const data = await scrapeMeal(req.params.meal);
+    const menu = await getMenu();
+    const meal = req.params.meal?.toLowerCase();
+    const data = menu[meal];
+    if (!data) {
+      res.status(404).json({ error: `Meal '${meal}' not found` });
+      return;
+    }
     res.json(data);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -91,6 +105,22 @@ app.post("/api/ratings", async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log("Backend running at http://localhost:3001");
-});
+getDb()
+  .then(async () => {
+    try {
+      await refreshMenu();
+    } catch (e) {
+      console.warn("Initial menu refresh failed; will retry on interval:", e.message);
+    }
+    setInterval(() => {
+      refreshMenu().catch(() => {});
+    }, REFRESH_INTERVAL_MS);
+    const port = Number(process.env.PORT) || 3001;
+    app.listen(port, () => {
+      console.log(`Backend running on port ${port} (menu refreshes every 15 min)`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB:", err.message);
+    process.exit(1);
+  });

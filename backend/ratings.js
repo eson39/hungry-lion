@@ -1,9 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const RATINGS_PATH = join(__dirname, "ratings.json");
+import { getDb, getRatingsCollection } from "./db.js";
 
 function getTodayKey() {
   const d = new Date();
@@ -13,42 +8,32 @@ function getTodayKey() {
   return `${y}-${m}-${day}`;
 }
 
-async function readAll() {
-  try {
-    const data = await readFile(RATINGS_PATH, "utf8");
-    return JSON.parse(data);
-  } catch (e) {
-    if (e.code === "ENOENT") return {};
-    throw e;
-  }
-}
-
-async function writeAll(data) {
-  await writeFile(RATINGS_PATH, JSON.stringify(data, null, 2), "utf8");
-}
-
-function ratingValue(entry) {
-  return typeof entry === "number" ? entry : entry.rating;
-}
-
 export function getRatingsForDate(dateKey) {
-  return readAll().then((data) => data[dateKey] ?? {});
+  return getDb().then(async () => {
+    const coll = getRatingsCollection();
+    const docs = await coll.find({ dateKey }).toArray();
+    const byHall = {};
+    for (const doc of docs) {
+      const { hallName, rating, visitorId, at } = doc;
+      if (!byHall[hallName]) byHall[hallName] = [];
+      byHall[hallName].push({ rating, visitorId, at });
+    }
+    return byHall;
+  });
 }
 
 export async function findExistingRating(visitorId, hallName) {
   if (!visitorId) return null;
-  const data = await readAll();
-  for (const byHall of Object.values(data)) {
-    const entries = byHall[hallName];
-    if (!Array.isArray(entries)) continue;
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i];
-      if (typeof entry === "object" && entry.visitorId === visitorId) {
-        return { dateKey: Object.keys(data).find(k => data[k] === byHall), index: i, entry };
-      }
-    }
-  }
-  return null;
+  await getDb();
+  const coll = getRatingsCollection();
+  const doc = await coll.findOne({ visitorId, hallName });
+  if (!doc) return null;
+  return {
+    dateKey: doc.dateKey,
+    index: 0,
+    entry: { rating: doc.rating, visitorId: doc.visitorId, at: doc.at },
+    _id: doc._id,
+  };
 }
 
 export async function addRating(dateKey, hallName, rating, visitorId) {
@@ -59,42 +44,38 @@ export async function addRating(dateKey, hallName, rating, visitorId) {
   if (!Number.isInteger(r) || r < 1 || r > 5) {
     throw new Error("rating must be an integer from 1 to 5");
   }
-  const data = await readAll();
+  await getDb();
+  const coll = getRatingsCollection();
   const trimmedHallName = hallName.trim();
-  
-  // Check if user already rated this hall
+  const at = Date.now();
+
   if (visitorId) {
     const existing = await findExistingRating(visitorId, trimmedHallName);
     if (existing) {
-      // Remove old rating from old date
-      const existingDateKey = existing.dateKey;
-      if (data[existingDateKey] && data[existingDateKey][trimmedHallName]) {
-        data[existingDateKey][trimmedHallName].splice(existing.index, 1);
-        // Clean up empty arrays
-        if (data[existingDateKey][trimmedHallName].length === 0) {
-          delete data[existingDateKey][trimmedHallName];
-        }
-        if (Object.keys(data[existingDateKey]).length === 0) {
-          delete data[existingDateKey];
-        }
-      }
+      await coll.deleteOne({ _id: existing._id });
     }
   }
-  
-  // Add/update rating for today
-  if (!data[dateKey]) data[dateKey] = {};
-  if (!data[dateKey][trimmedHallName]) data[dateKey][trimmedHallName] = [];
-  data[dateKey][trimmedHallName].push({ rating: r, visitorId: visitorId || null, at: Date.now() });
-  await writeAll(data);
-  const arr = data[dateKey][trimmedHallName];
-  const sum = arr.reduce((acc, entry) => acc + ratingValue(entry), 0);
-  const average = Math.round((sum / arr.length) * 10) / 10;
-  let userRating = undefined;
-  if (visitorId) {
-    const entry = arr.find((e) => typeof e === "object" && e.visitorId === visitorId);
-    if (entry) userRating = entry.rating;
-  }
-  return { average, count: arr.length, ...(userRating != null && { userRating }) };
+
+  await coll.insertOne({
+    dateKey,
+    hallName: trimmedHallName,
+    rating: r,
+    visitorId: visitorId || null,
+    at,
+  });
+
+  const docs = await coll.find({ dateKey, hallName: trimmedHallName }).toArray();
+  const sum = docs.reduce((acc, d) => acc + d.rating, 0);
+  const average = Math.round((sum / docs.length) * 10) / 10;
+  const userRating = visitorId
+    ? docs.find((d) => d.visitorId === visitorId)?.rating
+    : undefined;
+
+  return {
+    average,
+    count: docs.length,
+    ...(userRating != null && { userRating }),
+  };
 }
 
 export async function getTodayAverages(visitorId = null) {
@@ -103,14 +84,16 @@ export async function getTodayAverages(visitorId = null) {
   const result = {};
   for (const [hallName, ratings] of Object.entries(byHall)) {
     if (!ratings.length) continue;
-    const sum = ratings.reduce((acc, entry) => acc + ratingValue(entry), 0);
+    const sum = ratings.reduce((acc, entry) => acc + entry.rating, 0);
     const average = Math.round((sum / ratings.length) * 10) / 10;
-    let userRating = undefined;
-    if (visitorId) {
-      const entry = ratings.find((e) => typeof e === "object" && e.visitorId === visitorId);
-      if (entry) userRating = entry.rating;
-    }
-    result[hallName] = { average, count: ratings.length, ...(userRating != null && { userRating }) };
+    const userRating = visitorId
+      ? ratings.find((e) => e.visitorId === visitorId)?.rating
+      : undefined;
+    result[hallName] = {
+      average,
+      count: ratings.length,
+      ...(userRating != null && { userRating }),
+    };
   }
   return result;
 }

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "migrate-ratings": "node migrate-ratings.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,8 @@
     "axios": "^1.13.4",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongodb": "^7.0.0"
   }
 }
