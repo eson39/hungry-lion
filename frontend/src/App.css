@@ -1,7 +1,11 @@
 #root {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  min-height: 100%;
+  min-height: 100dvh;
+  background: inherit;
 }
 
 .app {
@@ -125,8 +129,26 @@
 
 .halls {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: 1fr;
   gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .halls {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .halls {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .halls {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
 .hall-card {
@@ -134,7 +156,7 @@
   border: 1px solid #93d9fa;
   border-radius: 8px;
   background: #282828;
-  min-width: 150px;
+  min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;

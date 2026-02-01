@@ -35,8 +35,8 @@ export default function HallCard({ hall, todayRating, onRate }) {
           <div key={station.name} className="station">
             <h3>{station.name}</h3>
             <ul>
-              {station.items.map((item) => (
-                <li key={item}>{item}</li>
+              {station.items.map((item, i) => (
+                <li key={`${station.name}-${i}-${item}`}>{item}</li>
               ))}
             </ul>
           </div>
