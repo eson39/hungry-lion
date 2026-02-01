@@ -7,7 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "node server.js",
-    "migrate-ratings": "node migrate-ratings.js"
+    "migrate-ratings": "node migrate-ratings.js",
+    "scrape-fac-shack": "node scrape-fac-shack.js",
+    "scrape-fac-shack:save": "SAVE_HTML=1 node scrape-fac-shack.js",
+    "scrape-john-jay": "node scrape-john-jay.js",
+    "scrape-john-jay:save": "SAVE_HTML=1 node scrape-john-jay.js",
+    "scrape-ferris": "node scrape-ferris.js",
+    "scrape-ferris:save": "SAVE_HTML=1 node scrape-ferris.js",
+    "scrape-johnnys": "node scrape-johnnys.js",
+    "scrape-johnnys:save": "SAVE_HTML=1 node scrape-johnnys.js"
   },
   "keywords": [],
   "author": "",

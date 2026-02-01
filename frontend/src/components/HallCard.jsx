@@ -26,6 +26,9 @@ export default function HallCard({ hall, todayRating, onRate }) {
         )}
       </div>
       {hall.hours && <p className="hours">{hall.hours}</p>}
+      {hall.capacityPercent != null && (
+        <p className="capacity">Current seating: {hall.capacityPercent}% full</p>
+      )}
       <div className="stations">
         {hall.stations.map((station) => (
           <div key={station.name} className="station">
