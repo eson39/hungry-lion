@@ -1,11 +1,13 @@
 import { getDb, getRatingsCollection } from "./db.js";
 
 function getTodayKey() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  return formatter.format(new Date());
 }
 
 export function getRatingsForDate(dateKey) {
@@ -79,7 +81,10 @@ export async function addRating(dateKey, hallName, rating, visitorId) {
 }
 
 export async function getTodayAverages(visitorId = null) {
+  await getDb();
   const dateKey = getTodayKey();
+  const coll = getRatingsCollection();
+  await coll.deleteMany({ dateKey: { $ne: dateKey } });
   const byHall = await getRatingsForDate(dateKey);
   const result = {};
   for (const [hallName, ratings] of Object.entries(byHall)) {
