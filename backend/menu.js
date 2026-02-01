@@ -112,7 +112,7 @@ function mergeJohnnysFromScraper(data, johnnysData) {
 }
 
 const HALL_ORDER = [
-  "Ferris",
+  "Ferris Booth Commons",
   "John Jay",
   "Faculty House",
   "JJ's",
