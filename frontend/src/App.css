@@ -232,8 +232,7 @@
   opacity: 1;
 }
 
-.hours,
-.capacity {
+.hours {
   margin: 0 0 1rem;
   font-size: 0.9rem;
   color: #bae6fc;
@@ -304,8 +303,7 @@
   color: #d97706;
 }
 
-[data-theme="light"] .hours,
-[data-theme="light"] .capacity {
+[data-theme="light"] .hours {
   color: #64748b;
 }
 

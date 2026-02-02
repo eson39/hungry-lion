@@ -46,7 +46,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/ratings/today', { credentials: 'include' })
+    fetch('/api/ratings/today', { credentials: 'include', cache: 'no-store' })
       .then((res) => {
         if (!res.ok) throw new Error(res.statusText)
         return res.json()

@@ -7,16 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "node server.js",
-    "migrate-ratings": "node migrate-ratings.js",
-    "scrape-fac-shack": "node scrape-fac-shack.js",
-    "scrape-fac-shack:save": "SAVE_HTML=1 node scrape-fac-shack.js",
-    "scrape-john-jay": "node scrape-john-jay.js",
-    "scrape-john-jay:save": "SAVE_HTML=1 node scrape-john-jay.js",
-    "scrape-ferris": "node scrape-ferris.js",
-    "scrape-ferris:save": "SAVE_HTML=1 node scrape-ferris.js",
-    "scrape-johnnys": "node scrape-johnnys.js",
-    "scrape-johnnys:save": "SAVE_HTML=1 node scrape-johnnys.js",
-    "postinstall": "npx puppeteer browsers install chrome || true"
+    "migrate-ratings": "node migrate-ratings.js"
   },
   "keywords": [],
   "author": "",
@@ -24,7 +15,6 @@
   "description": "",
   "dependencies": {
     "axios": "^1.13.4",
-    "puppeteer": "^23.0.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
